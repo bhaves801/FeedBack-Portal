@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>TinyTunes Phonics Class</title>
+  <link href="https://fonts.googleapis.com/css2?family=Fredoka+One&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --yellow: #FFD94A;
+      --orange: #FF8C42;
+      --coral:  #FF6B6B;
+      --teal:   #4ECDC4;
+      --navy:   #1B2A4A;
+      --cream:  #FFF9EF;
+      --mint:   #A8E6CF;
+      --purple: #C9B8FF;
+      --white:  #ffffff;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      height: 100%;
+      font-family: 'Nunito', sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* ═══════════════════════════════
+       SCREENS
+    ═══════════════════════════════ */
+    .screen {
+      min-height: 100vh;
+      width: 100%;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .screen.active { display: flex; }
+
+    /* ═══════════════════════════════
+       WELCOME SCREEN
+    ═══════════════════════════════ */
+    #welcome {
+      background: linear-gradient(160deg, #1B2A4A 0%, #263f6e 60%, #1e4d5c 100%);
+    }
+
+    /* Floating music notes */
+    .notes-bg {
+      position: absolute; inset: 0; pointer-events: none; overflow: hidden;
+    }
+    .note {
+      position: absolute;
+      font-size: 2rem;
+      opacity: 0;
+      animation: floatNote linear infinite;
+      user-select: none;
+    }
+    .note:nth-child(1)  { left:5%;  font-size:1.8rem; animation-duration:8s;  animation-delay:0s; }
+    .note:nth-child(2)  { left:12%; font-size:2.5rem; animation-duration:11s; animation-delay:1s; }
+    .note:nth-child(3)  { left:22%; font-size:1.5rem; animation-duration:9s;  animation-delay:2s; }
+    .note:nth-child(4)  { left:35%; font-size:2.2rem; animation-duration:13s; animation-delay:0.5s; }
+    .note:nth-child(5)  { left:48%; font-size:1.7rem; animation-duration:10s; animation-delay:3s; }
+    .note:nth-child(6)  { left:60%; font-size:2.8rem; animation-duration:12s; animation-delay:1.5s; }
+    .note:nth-child(7)  { left:72%; font-size:1.6rem; animation-duration:8s;  animation-delay:2.5s; }
+    .note:nth-child(8)  { left:82%; font-size:2.1rem; animation-duration:14s; animation-delay:0.8s; }
+    .note:nth-child(9)  { left:90%; font-size:1.9rem; animation-duration:9s;  animation-delay:4s; }
+    .note:nth-child(10) { left:97%; font-size:2.4rem; animation-duration:11s; animation-delay:1.2s; }
+    @keyframes floatNote {
+      0%   { transform: translateY(110vh) rotate(0deg);   opacity: 0; }
+      10%  { opacity: 0.35; }
+      90%  { opacity: 0.25; }
+      100% { transform: translateY(-15vh) rotate(25deg);  opacity: 0; }
+    }
+
+    /* Glow orbs */
+    .orb {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(80px);
+      opacity: 0.25;
+      pointer-events: none;
+    }
+    .orb1 { width:420px; height:420px; background:var(--teal);   top:-120px; left:-100px; }
+    .orb2 { width:350px; height:350px; background:var(--yellow); bottom:-80px; right:-80px; }
+    .orb3 { width:200px; height:200px; background:var(--coral);  top:40%;  left:50%; }
+
+    /* Welcome content */
+    .welcome-content {
+      position: relative; z-index: 2;
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center;
+      padding: 40px 24px;
+      max-width: 680px;
+    }
+
+    .logo-wrap {
+      margin-bottom: 24px;
+      animation: bounceIn 0.8s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    .logo-circle {
+      width: 120px; height: 120px;
+      background: linear-gradient(135deg, var(--yellow), var(--orange));
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 3.5rem;
+      margin: 0 auto 16px;
+      box-shadow: 0 8px 30px rgba(255,140,66,0.5), 0 0 0 6px rgba(255,217,74,0.25);
+      animation: pulse 3s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 8px 30px rgba(255,140,66,0.5), 0 0 0 6px rgba(255,217,74,0.25); }
+      50%      { box-shadow: 0 8px 40px rgba(255,140,66,0.7), 0 0 0 14px rgba(255,217,74,0.12); }
+    }
+    @keyframes bounceIn {
+      from { opacity:0; transform: scale(0.4) rotate(-10deg); }
+      to   { opacity:1; transform: scale(1) rotate(0deg); }
+    }
+
+    .welcome-tag {
+      display: inline-block;
+      background: rgba(78,205,196,0.18);
+      border: 1.5px solid rgba(78,205,196,0.5);
+      color: var(--teal);
+      font-size: 0.8rem;
+      font-weight: 800;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      padding: 5px 16px;
+      border-radius: 50px;
+      margin-bottom: 16px;
+      animation: fadeSlideUp 0.6s 0.2s both;
+    }
+
+    .welcome-title {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(3rem, 8vw, 5.5rem);
+      color: var(--white);
+      line-height: 1.05;
+      margin-bottom: 6px;
+      animation: fadeSlideUp 0.6s 0.35s both;
+    }
+    .welcome-title .accent { color: var(--yellow); }
+
+    .welcome-subtitle {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(1.2rem, 3vw, 1.7rem);
+      color: var(--teal);
+      letter-spacing: 1px;
+      margin-bottom: 20px;
+      animation: fadeSlideUp 0.6s 0.45s both;
+    }
+
+    .welcome-desc {
+      font-size: 1.05rem;
+      color: rgba(255,255,255,0.72);
+      font-weight: 600;
+      line-height: 1.75;
+      max-width: 480px;
+      margin-bottom: 36px;
+      animation: fadeSlideUp 0.6s 0.55s both;
+    }
+
+    /* Feature pills */
+    .feature-pills {
+      display: flex; flex-wrap: wrap; gap: 10px;
+      justify-content: center;
+      margin-bottom: 40px;
+      animation: fadeSlideUp 0.6s 0.65s both;
+    }
+    .pill {
+      background: rgba(255,255,255,0.1);
+      border: 1.5px solid rgba(255,255,255,0.2);
+      color: #fff;
+      font-size: 0.88rem;
+      font-weight: 700;
+      padding: 7px 16px;
+      border-radius: 50px;
+      display: flex; align-items: center; gap: 6px;
+      backdrop-filter: blur(6px);
+    }
+
+    /* CTA Button */
+    .btn-enter {
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.3rem;
+      letter-spacing: 0.5px;
+      padding: 18px 52px;
+      background: linear-gradient(135deg, var(--yellow) 0%, var(--orange) 100%);
+      color: var(--navy);
+      border: none;
+      border-radius: 60px;
+      cursor: pointer;
+      box-shadow: 0 6px 0 #c96b1a, 0 12px 32px rgba(255,140,66,0.45);
+      transition: transform 0.13s, box-shadow 0.13s;
+      animation: fadeSlideUp 0.6s 0.75s both;
+      position: relative;
+      overflow: hidden;
+    }
+    .btn-enter::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.3), transparent);
+      border-radius: 60px;
+    }
+    .btn-enter:hover  { transform: translateY(-3px); box-shadow: 0 9px 0 #c96b1a, 0 18px 40px rgba(255,140,66,0.5); }
+    .btn-enter:active { transform: translateY(3px);  box-shadow: 0 3px 0 #c96b1a, 0 6px 16px rgba(255,140,66,0.3); }
+
+    /* scroll hint */
+    .scroll-hint {
+      position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%);
+      color: rgba(255,255,255,0.35);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+      animation: fadeSlideUp 0.6s 1s both;
+    }
+    .chevron { animation: bounce 1.6s ease-in-out infinite; font-size: 1.2rem; }
+    @keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }
+
+    @keyframes fadeSlideUp {
+      from { opacity:0; transform:translateY(28px); }
+      to   { opacity:1; transform:translateY(0); }
+    }
+
+    /* ═══════════════════════════════
+       FEEDBACK SCREEN
+    ═══════════════════════════════ */
+    #feedback-page {
+      background: linear-gradient(160deg, #e8f7ff 0%, #fef9ec 100%);
+      justify-content: flex-start;
+      padding: 50px 16px 60px;
+    }
+
+    /* Deco circles */
+    .deco { position: absolute; border-radius: 50%; pointer-events: none; }
+    .deco1 { width:300px; height:300px; background:var(--yellow); opacity:0.08; top:-80px; right:-80px; }
+    .deco2 { width:200px; height:200px; background:var(--teal);   opacity:0.1;  bottom:40px; left:-60px; }
+    .deco3 { width:120px; height:120px; background:var(--coral);  opacity:0.09; top:40%;  right:5%; }
+
+    .fb-header {
+      text-align: center;
+      margin-bottom: 32px;
+      position: relative; z-index: 2;
+      animation: fadeSlideUp 0.6s both;
+    }
+    .fb-badge {
+      display: inline-block;
+      background: var(--yellow);
+      color: var(--navy);
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 5px 16px;
+      border-radius: 50px;
+      margin-bottom: 12px;
+    }
+    .fb-title {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(1.9rem, 5vw, 2.8rem);
+      color: var(--navy);
+      line-height: 1.1;
+      margin-bottom: 8px;
+    }
+    .fb-title span { color: var(--orange); }
+    .fb-desc {
+      font-size: 0.95rem;
+      color: #5a7080;
+      font-weight: 600;
+    }
+
+    /* Card */
+    .fb-card {
+      background: var(--white);
+      border-radius: 28px;
+      padding: 40px 42px 46px;
+      width: 100%; max-width: 500px;
+      box-shadow: 0 4px 0 #daeaf3, 0 20px 50px rgba(26,58,92,0.1);
+      position: relative; z-index: 2;
+      animation: riseCard 0.7s 0.1s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    @keyframes riseCard {
+      from { opacity:0; transform:translateY(60px) scale(0.95); }
+      to   { opacity:1; transform:translateY(0) scale(1); }
+    }
+
+    .form-group { margin-bottom: 22px; }
+
+    .form-label {
+      display: flex; align-items: center; gap: 8px;
+      font-family: 'Fredoka One', cursive;
+      font-size: 1rem;
+      color: var(--navy);
+      margin-bottom: 8px;
+      letter-spacing: 0.2px;
+    }
+
+    input[type="text"], textarea {
+      width: 100%;
+      padding: 13px 16px;
+      border: 2.5px solid #ddeef7;
+      border-radius: 14px;
+      font-family: 'Nunito', sans-serif;
+      font-size: 1rem;
+      color: #2d2d2d;
+      background: #f7fbff;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+    input[type="text"]:focus, textarea:focus {
+      border-color: var(--teal);
+      background: #fff;
+      box-shadow: 0 0 0 4px rgba(78,205,196,0.15);
+    }
+    textarea { resize: vertical; min-height: 130px; line-height: 1.65; }
+
+    /* Stars */
+    .star-label {
+      font-family: 'Fredoka One', cursive;
+      font-size: 1rem;
+      color: var(--navy);
+      margin-bottom: 10px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .stars { display: flex; flex-direction: row-reverse; justify-content: flex-end; gap: 6px; }
+    .stars input { display: none; }
+    .stars label {
+      font-size: 2.1rem;
+      cursor: pointer;
+      color: #dde8f0;
+      transition: color 0.15s, transform 0.15s;
+      margin: 0;
+    }
+    .stars input:checked ~ label,
+    .stars label:hover,
+    .stars label:hover ~ label { color: var(--yellow); transform: scale(1.2); }
+
+    hr.divider { border: none; border-top: 2.5px dashed #ddeef7; margin: 24px 0; }
+
+    /* Submit */
+    .btn-submit {
+      width: 100%;
+      padding: 15px;
+      margin-top: 8px;
+      background: linear-gradient(135deg, var(--coral), #ff9966);
+      color: #fff;
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.2rem;
+      letter-spacing: 0.5px;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      box-shadow: 0 5px 0 #c94040, 0 10px 24px rgba(255,107,107,0.35);
+      transition: transform 0.12s, box-shadow 0.12s;
+    }
+    .btn-submit:hover  { transform:translateY(-2px); box-shadow:0 7px 0 #c94040, 0 14px 28px rgba(255,107,107,0.4); }
+    .btn-submit:active { transform:translateY(2px);  box-shadow:0 3px 0 #c94040, 0 5px 12px rgba(255,107,107,0.2); }
+
+    /* ═══════════════════════════════
+       SUCCESS SCREEN
+    ═══════════════════════════════ */
+    #success-page {
+      background: linear-gradient(160deg, #1B2A4A 0%, #1e4d5c 100%);
+    }
+
+    .success-content {
+      position: relative; z-index: 2;
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center;
+      padding: 40px 24px;
+      max-width: 560px;
+      animation: fadeSlideUp 0.7s both;
+    }
+    .confetti-ring {
+      font-size: 5rem;
+      margin-bottom: 20px;
+      animation: spinBounce 0.8s cubic-bezier(.34,1.56,.64,1) both;
+    }
+    @keyframes spinBounce {
+      from { transform: scale(0) rotate(-180deg); opacity:0; }
+      to   { transform: scale(1) rotate(0deg);    opacity:1; }
+    }
+    .success-title {
+      font-family: 'Fredoka One', cursive;
+      font-size: clamp(2rem, 6vw, 3.2rem);
+      color: var(--white);
+      margin-bottom: 8px;
+      line-height: 1.1;
+    }
+    .success-title .accent { color: var(--yellow); }
+    .success-subtitle {
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.3rem;
+      color: var(--teal);
+      margin-bottom: 16px;
+    }
+    .success-msg {
+      font-size: 1rem;
+      color: rgba(255,255,255,0.68);
+      font-weight: 600;
+      line-height: 1.8;
+      margin-bottom: 36px;
+    }
+    .btn-back {
+      font-family: 'Fredoka One', cursive;
+      font-size: 1.1rem;
+      padding: 14px 40px;
+      background: var(--teal);
+      color: var(--navy);
+      border: none;
+      border-radius: 50px;
+      cursor: pointer;
+      box-shadow: 0 5px 0 #309e97, 0 10px 24px rgba(78,205,196,0.4);
+      transition: transform 0.12s;
+    }
+    .btn-back:hover { transform: translateY(-2px); }
+
+    /* footer */
+    .page-footer {
+      margin-top: 30px;
+      font-size: 0.82rem;
+      color: rgba(255,255,255,0.3);
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      position: relative; z-index: 2;
+    }
+    .page-footer span { color: var(--coral); }
+
+    @media (max-width: 520px) {
+      .fb-card { padding: 28px 20px 34px; }
+      .welcome-title { font-size: 2.6rem; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════
+     SCREEN 1: WELCOME
+══════════════════════════ -->
+<div class="screen active" id="welcome">
+
+  <div class="notes-bg">
+    <span class="note">🎵</span><span class="note">🎶</span><span class="note">🎵</span>
+    <span class="note">🎼</span><span class="note">🎵</span><span class="note">🎶</span>
+    <span class="note">🎵</span><span class="note">🎼</span><span class="note">🎶</span>
+    <span class="note">🎵</span>
+  </div>
+
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+  <div class="orb orb3"></div>
+
+  <div class="welcome-content">
+
+    <div class="logo-wrap">
+      <div class="logo-circle">🎵</div>
+    </div>
+
+    <div class="welcome-tag">✨ Phonics Class ✨</div>
+
+    <h1 class="welcome-title">Welcome to<br/><span class="accent">TinyTunes!</span></h1>
+    <p class="welcome-subtitle">Where Little Voices Find Big Music 🎶</p>
+
+    <p class="welcome-desc">
+      We're so happy you're here! TinyTunes is a fun-filled phonics class designed to help your little ones discover the joy of sounds, words, and music.
+    </p>
+
+    <div class="feature-pills">
+      <div class="pill">🔤 Phonics Learning</div>
+      <div class="pill">🎤 Fun Activities</div>
+      <div class="pill">🧡 Expert Teachers</div>
+      <div class="pill">⭐ Loved by Families</div>
+    </div>
+
+    <button class="btn-enter" onclick="goToFeedback()">
+      📝 Share Your Feedback
+    </button>
+
+  </div>
+
+  <div class="scroll-hint">
+    <span>Tap to continue</span>
+    <span class="chevron">▼</span>
+  </div>
+
+</div>
+
+
+<!-- ══════════════════════════
+     SCREEN 2: FEEDBACK FORM
+══════════════════════════ -->
+<div class="screen" id="feedback-page">
+
+  <div class="deco deco1"></div>
+  <div class="deco deco2"></div>
+  <div class="deco deco3"></div>
+
+  <div class="fb-header">
+    <div class="fb-badge">🎵 TinyTunes</div>
+    <h2 class="fb-title">Share Your <span>Feedback</span></h2>
+    <p class="fb-desc">Your thoughts help us make every class even better! 💛</p>
+  </div>
+
+  <div class="fb-card">
+    <form id="feedbackForm">
+
+      <div class="form-group">
+        <div class="form-label"><span>🧒</span> Student's Name</div>
+        <input type="text" id="studentName" placeholder="e.g. Priya" required/>
+      </div>
+
+      <div class="form-group">
+        <div class="form-label"><span>👨‍👩‍👧</span> Parent's Name</div>
+        <input type="text" id="parentName" placeholder="e.g. Mrs. Kavitha" required/>
+      </div>
+
+      <hr class="divider"/>
+
+      <div class="form-group">
+        <div class="star-label"><span>⭐</span> How was the class?</div>
+        <div class="stars">
+          <input type="radio" id="s5" name="rating" value="5"/><label for="s5">★</label>
+          <input type="radio" id="s4" name="rating" value="4"/><label for="s4">★</label>
+          <input type="radio" id="s3" name="rating" value="3"/><label for="s3">★</label>
+          <input type="radio" id="s2" name="rating" value="2"/><label for="s2">★</label>
+          <input type="radio" id="s1" name="rating" value="1"/><label for="s1">★</label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <div class="form-label"><span>💬</span> Your Feedback</div>
+        <textarea id="feedbackText" placeholder="Tell us what you loved, what could improve, or any suggestions…" required></textarea>
+      </div>
+
+      <button type="submit" class="btn-submit">🚀 Submit Feedback</button>
+
+    </form>
+  </div>
+
+</div>
+
+
+<!-- ══════════════════════════
+     SCREEN 3: THANK YOU
+══════════════════════════ -->
+<div class="screen" id="success-page">
+
+  <div class="orb orb1"></div>
+  <div class="orb orb2"></div>
+
+  <div class="notes-bg">
+    <span class="note">🎵</span><span class="note">🎶</span><span class="note">🎵</span>
+    <span class="note">🎼</span><span class="note">🎵</span>
+  </div>
+
+  <div class="success-content">
+    <div class="confetti-ring">🎊</div>
+    <h2 class="success-title">Thank You for<br/>Your <span class="accent">Feedback!</span></h2>
+    <p class="success-subtitle">You're amazing! 🌟</p>
+    <p class="success-msg">
+      We truly appreciate you taking the time to share<br/>
+      your thoughts with TinyTunes. Your feedback helps<br/>
+      us make every class more magical! 🎵
+    </p>
+    <button class="btn-back" onclick="goBack()">🏠 Back to Home</button>
+  </div>
+
+  <div class="page-footer">Made with <span>♥</span> for TinyTunes Phonics Class</div>
+
+</div>
+
+
+<script>
+  function goToFeedback() {
+    document.getElementById('welcome').classList.remove('active');
+    document.getElementById('feedback-page').classList.add('active');
+    window.scrollTo(0, 0);
+  }
+
+  document.getElementById('feedbackForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const s = document.getElementById('studentName').value.trim();
+    const p = document.getElementById('parentName').value.trim();
+    const f = document.getElementById('feedbackText').value.trim();
+    if (!s || !p || !f) {
+      alert('Please fill in all fields before submitting!');
+      return;
+    }
+    document.getElementById('feedback-page').classList.remove('active');
+    document.getElementById('success-page').classList.add('active');
+    window.scrollTo(0, 0);
+  });
+
+  function goBack() {
+    document.getElementById('feedbackForm').reset();
+    document.getElementById('success-page').classList.remove('active');
+    document.getElementById('welcome').classList.add('active');
+    window.scrollTo(0, 0);
+  }
+</script>
+
+</body>
+</html>
